@@ -1,0 +1,46 @@
+# Copy this file to ~/.dbt/profiles.yml on your WSL Ubuntu box
+# (mkdir -p ~/.dbt && cp .dbt/profiles.yml.example ~/.dbt/profiles.yml)
+# Fill in secrets via environment variables - never commit real credentials.
+
+sfmc_email_analytics:
+  target: dev
+  outputs:
+
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: SFMC_DBT_DEV_ROLE
+      database: SFMC_DEV
+      warehouse: SFMC_WH_DEV
+      schema: dbt_dev            # each dev gets overridden below by generate_schema_name macro per user
+      threads: 8
+      client_session_keep_alive: false
+      query_tag: dbt_dev
+
+    uat:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_UAT_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_UAT_PASSWORD') }}"
+      role: SFMC_DBT_UAT_ROLE
+      database: SFMC_UAT
+      warehouse: SFMC_WH_UAT
+      schema: uat
+      threads: 8
+      query_tag: dbt_uat
+
+    prod:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_PROD_USER') }}"
+      # key-pair auth recommended for prod instead of password
+      private_key_path: "{{ env_var('SNOWFLAKE_PROD_PK_PATH') }}"
+      private_key_passphrase: "{{ env_var('SNOWFLAKE_PROD_PK_PASSPHRASE') }}"
+      role: SFMC_DBT_PROD_ROLE
+      database: SFMC_PROD
+      warehouse: SFMC_WH_PROD
+      schema: prod
+      threads: 16
+      query_tag: dbt_prod

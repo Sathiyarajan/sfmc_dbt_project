@@ -1,0 +1,61 @@
+version: 2
+
+sources:
+  - name: sfmc_raw
+    database: "{{ 'SFMC_RAW_' ~ target.name | upper }}"     # resolves to SFMC_RAW_DEV / _UAT / _PROD based on target
+    schema: public
+    loader: s3_copy_into
+    loaded_at_field: loaded_at
+    freshness:
+      warn_after: {count: 6, period: hour}
+      error_after: {count: 24, period: hour}
+    tables:
+      - name: raw_email_account_summary
+        description: >
+          Raw VARIANT payloads landed from the SFMC Email Account Summary API,
+          staged via S3 external stage + COPY INTO / Snowpipe.
+        columns:
+          - name: raw_payload
+            tests: [not_null]
+          - name: file_name
+            tests: [not_null]
+
+      - name: raw_email_journey_summary
+        description: >
+          Raw VARIANT payloads landed from the SFMC Journey Builder
+          Email Journey Summary API.
+        columns:
+          - name: raw_payload
+            tests: [not_null]
+          - name: file_name
+            tests: [not_null]
+            
+  - name: sfmc_raw_mobile
+    database: "{{ 'SFMC_MOBILE_RAW_' ~ target.name | upper }}"     # resolves to SFMC_RAW_DEV / _UAT / _PROD based on target
+    schema: public
+    loader: s3_copy_into
+    loaded_at_field: loaded_at
+    freshness:
+      warn_after: {count: 6, period: hour}
+      error_after: {count: 24, period: hour}
+    tables:
+      - name: raw_mobile_account_summary
+        description: >
+          Raw VARIANT payloads landed from the SFMC Email Account Summary API,
+          staged via S3 external stage + COPY INTO / Snowpipe.
+        columns:
+          - name: raw_payload
+            tests: [not_null]
+          - name: file_name
+            tests: [not_null]
+
+      - name: raw_email_journey_summary
+        description: >
+          Raw VARIANT payloads landed from the SFMC Journey Builder
+          Email Journey Summary API.
+        columns:
+          - name: raw_payload
+            tests: [not_null]
+          - name: file_name
+            tests: [not_null]
+

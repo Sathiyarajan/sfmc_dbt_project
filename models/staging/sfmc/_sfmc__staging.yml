@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: stg_sfmc__email_account_summary
+    description: Bronze - flattened, latest-file-deduped email account summary records.
+    columns:
+      - name: account_id
+        tests: [not_null]
+      - name: report_date
+        tests: [not_null]
+      - name: modified_date
+        tests: [not_null]
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [account_id, report_date]
+
+  - name: stg_sfmc__email_journey_summary
+    description: Bronze - flattened, latest-file-deduped email journey summary records.
+    columns:
+      - name: journey_id
+        tests: [not_null]
+      - name: email_activity_id
+        tests: [not_null]
+      - name: report_date
+        tests: [not_null]
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns: [journey_id, email_activity_id, report_date]

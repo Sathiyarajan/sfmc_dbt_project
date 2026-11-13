@@ -1,0 +1,46 @@
+version: 2
+
+models:
+  - name: fct_email_account_summary
+    description: Gold - reporting fact table for email account-level performance, incremental merge.
+    columns:
+      - name: account_summary_sk
+        tests: [not_null, unique]
+      - name: delivery_rate
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
+      - name: open_rate
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1
+
+  - name: fct_email_journey_summary
+    description: Gold - reporting fact table for journey-level email performance, incremental merge.
+    columns:
+      - name: journey_summary_sk
+        tests: [not_null, unique]
+      - name: journey_id
+        tests: [not_null]
+
+  - name: dim_email_account
+    description: Gold - current (Type 1) account dimension for BI joins.
+    columns:
+      - name: account_id
+        tests: [not_null, unique]
+
+exposures:
+  - name: email_analytics_dashboard
+    type: dashboard
+    maturity: medium
+    url: https://bi-tool.internal/dashboards/email-analytics
+    description: Executive dashboard for SFMC email account & journey performance.
+    depends_on:
+      - ref('fct_email_account_summary')
+      - ref('fct_email_journey_summary')
+      - ref('dim_email_account')
+    owner:
+      name: Data Engineering
+      email: data-eng@company.com

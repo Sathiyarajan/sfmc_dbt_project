@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: int_sfmc__email_account_summary_enriched
+    description: Silver - deduped, rate-metric-enriched email account summary (transient table).
+    columns:
+      - name: account_summary_sk
+        tests: [not_null, unique]
+      - name: account_id
+        tests: [not_null]
+
+  - name: int_sfmc__email_journey_summary_enriched
+    description: Silver - deduped, rate-metric-enriched journey summary joined to SCD2 account attrs.
+    columns:
+      - name: journey_summary_sk
+        tests: [not_null, unique]
+      - name: journey_id
+        tests: [not_null]
+
+  - name: int_sfmc__account_scd2
+    description: Silver - business-friendly view over the sfmc_email_account_scd2 snapshot.
+    columns:
+      - name: account_scd_sk
+        tests: [not_null, unique]
+      - name: account_id
+        tests: [not_null]
+      - name: is_active
+        tests: [not_null]
